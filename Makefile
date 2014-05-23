@@ -27,7 +27,7 @@ include platforms/$(PLATFORM)/defs.arp
 
 export HOST_OS:= linux
 
-export LIB_DIR:=-L $(SYSTEMC)/lib-$(HOST_OS) -L $(ARCHC_PATH)/lib \
+export LIB_DIR:=-L $(SYSTEMC)/lib-linux64 -L $(ARCHC_PATH)/lib \
   $(foreach ip, $(IP), -L $(ARP)/ip/$(ip)) \
   $(foreach is, $(IS), -L $(ARP)/is/$(is)) \
   $(foreach wrapper, $(WRAPPER), -L $(ARP)/wrappers/$(wrapper)) \
