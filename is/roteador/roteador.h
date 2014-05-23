@@ -32,10 +32,8 @@ class roteador :
     public:
     /// Exposed port with ArchC interface
     sc_export< ac_tlm_transport_if > target_export;
-    /// Internal write
-    ac_tlm_rsp_status writem( const uint32_t & , const uint32_t & );
-    /// Internal read
-    ac_tlm_rsp_status readm( const uint32_t & , uint32_t & );
+
+    ac_tlm_port DM_port;
 
     /**
      * Implementation of TLM transport method that
@@ -51,17 +49,13 @@ class roteador :
       switch( request.type ) {
       case READ :     // Packet is sent from Master to Slave
         #ifdef DEBUG  // Turn it on to print transport level messages
-      cout << "Transport READ at 0x" << hex << request.addr << " value ";
-      cout << response.data << endl;
+        response = DM_port->transport(request);
         #endif
-        response.status = readm( request.addr , response.data );
         break;
       case WRITE:     // Packet is sent from Slave to Master
         #ifdef DEBUG
-      cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
-      cout << request.data << endl;
+        response = DM_port->transport(request);
         #endif
-        response.status = writem( request.addr , request.data );
         break;
       default :
         response.status = ERROR;
@@ -80,11 +74,8 @@ class roteador :
      */
     ac_tlm_mem( sc_module_name module_name );
 
-  private:
-    uint8_t *memory;
-
   };
 
 }
 
-#endif //AC_TLM_MEM_H_
+#endif //ROTEADOR_H_
