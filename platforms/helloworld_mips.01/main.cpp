@@ -29,9 +29,11 @@ using user::roteador;
 
 int sc_main(int ac, char *av[])
 {
+  int i;
 
   //!  ISA simulator
   mips1 mips1_proc1("mips1");
+  mips1 mips1_proc2("mips2");
   roteador rot("roteador");
   ac_tlm_mem mem("mem");
 
@@ -39,7 +41,10 @@ int sc_main(int ac, char *av[])
   ac_trace("mips1_proc1.trace");
 #endif 
 
+  //cria conexao entre processadores(master) e roteador(slave)
   mips1_proc1.DM_port(rot.target_export);
+  mips1_proc2.DM_port(rot.target_export);
+  //cria conexao entre roteador(master) e memoria(slave)
   rot.DM_port(mem.target_export);
 
   mips1_proc1.init(ac, av);

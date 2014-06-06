@@ -88,11 +88,12 @@ void mips1_syscall::return_from_syscall()
 void mips1_syscall::set_prog_args(int argc, char **argv)
 {
   int i, j, base;
+  static int cpu_id = 1;
 
   unsigned int ac_argv[30];
   char ac_argstr[512];
 
-  base = AC_RAM_END - 512;
+  base = AC_RAM_END*cpu_id++ - 512;
   for (i=0, j=0; i<argc; i++) {
     int len = strlen(argv[i]) + 1;
     ac_argv[i] = base + j;
