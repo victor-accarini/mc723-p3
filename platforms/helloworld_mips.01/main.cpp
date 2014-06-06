@@ -14,6 +14,8 @@
  
 // Rodolfo editou aqui
 //
+#define CORE_NUM 2 
+
 const char *project_name="mips1";
 const char *project_file="mips1.ac";
 const char *archc_version="2.0beta1";
@@ -27,42 +29,79 @@ const char *archc_options="-abi -dy ";
 using user::ac_tlm_mem;
 using user::roteador;
 
+char** alloc_args(int n, char **av){
+  char **av_cpy;
+  int i;
+
+  av_cpy = (char**)malloc(sizeof(char*)*n);
+  for (i = 0; i < n; i++)
+  {
+    av_cpy[i]= (char*)malloc(sizeof(char)*strlen(av[i])+1);
+  }
+  
+  return av_cpy;
+}
+
+void cpy_strings(int n, char **dest, char **origem){
+  int i;
+  for (i = 0; i < n; i++){
+    strcpy(dest[i], origem[i]);
+  }
+}
+
 int sc_main(int ac, char *av[])
 {
   int i;
+  char **av2;
+  char nome[100];
+  std:stringstream nomefinal;
 
   //!  ISA simulator
-  mips1 mips1_proc1("mips1");
-  mips1 mips1_proc2("mips2");
-  roteador rot("roteador");
+  mips1 **core = new mips1 *[CORE_NUM];
+  roteador rot("roteador", CORE_NUM);
   ac_tlm_mem mem("mem");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
 #endif 
-
-  //cria conexao entre processadores(master) e roteador(slave)
-  mips1_proc1.DM_port(rot.target_export);
-  mips1_proc2.DM_port(rot.target_export);
+  
   //cria conexao entre roteador(master) e memoria(slave)
   rot.DM_port(mem.target_export);
 
-  mips1_proc1.init(ac, av);
+  av2 = alloc_args(ac, av);
+
+  for (i = 0; i < CORE_NUM; i++){
+    nomefinal.str("mips1_");
+    nomefinal << i;
+    nomefinal.getline(nome, 100);
+
+    //cria conexao entre processadores(master) e roteador(slave)
+    core[i] = new mips1(nome);
+    core[i]->DM_port(*(rot.target_export[i]));  
+
+    cpy_strings(ac, av2, cpy);
+    core[i]->init(ac, av2);
+  }
+
   cerr << endl;
 
   sc_start();
 
-  mips1_proc1.PrintStat();
-  cerr << endl;
+  for (i = 0; i < CORE_NUM; i++){
+    core[i]->PrintStat();
+    cerr << endl;
+  }
 
 #ifdef AC_STATS
-  mips1_proc1.ac_sim_stats.time = sc_simulation_time();
-  mips1_proc1.ac_sim_stats.print();
+  for (i = 0; i < CORE_NUM; i++){
+    core[i]->ac_sim_stats.time = sc_simulation_time();
+    core[i]->ac_sim_stats.print();
+  }
 #endif 
 
 #ifdef AC_DEBUG
   ac_close_trace();
 #endif 
 
-  return mips1_proc1.ac_exit_status;
+  return core[0]->ac_exit_status;
 }

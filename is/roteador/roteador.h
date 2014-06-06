@@ -31,7 +31,7 @@ class roteador :
   {
     public:
     /// Exposed port with ArchC interface
-    sc_export< ac_tlm_transport_if > target_export;
+    sc_export< ac_tlm_transport_if > **target_export;
 
     ac_tlm_port DM_port;
 
@@ -69,11 +69,18 @@ class roteador :
     /**
      * Default constructor.
      *
-     * @param k Memory size in kilowords.
+     * @param k .
      *
      */
-    ac_tlm_mem( sc_module_name module_name );
+    roteador( sc_module_name module_name, uint core_num );
 
+    /**
+     * Default destructor.
+     */
+    ~roteador();
+    
+    private:
+      uint core_num;
   };
 
 }
