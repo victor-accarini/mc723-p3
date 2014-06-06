@@ -14,7 +14,7 @@
  
 // Rodolfo editou aqui
 //
-#define CORE_NUM 2 
+#define CORE_NUM 1 
 
 const char *project_name="mips1";
 const char *project_file="mips1.ac";
@@ -25,6 +25,7 @@ const char *archc_options="-abi -dy ";
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
 #include  "roteador.h"
+#include  <sstream>
 
 using user::ac_tlm_mem;
 using user::roteador;
@@ -54,7 +55,7 @@ int sc_main(int ac, char *av[])
   int i;
   char **av2;
   char nome[100];
-  std:stringstream nomefinal;
+  std::stringstream nomefinal;
 
   //!  ISA simulator
   mips1 **core = new mips1 *[CORE_NUM];
@@ -79,7 +80,7 @@ int sc_main(int ac, char *av[])
     core[i] = new mips1(nome);
     core[i]->DM_port(*(rot.target_export[i]));  
 
-    cpy_strings(ac, av2, cpy);
+    cpy_strings(ac, av2, av);
     core[i]->init(ac, av2);
   }
 

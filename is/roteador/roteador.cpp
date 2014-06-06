@@ -11,7 +11,7 @@ using user::roteador;
 
 /// Constructor
 roteador::roteador( sc_module_name module_name, uint core_num ) :
-  sc_module( module_name )
+  sc_module( module_name ), DM_port("memory_port", 33554432U)
 {
     std::stringstream nome;
     char nome_str[100];
@@ -22,7 +22,7 @@ roteador::roteador( sc_module_name module_name, uint core_num ) :
     /// Binds target_export to the router
     for (int i = 0; i < core_num; i++)
     {
-	 nome.str="iport";
+	 nome.str("iport");
 	 nome << i;
 	 nome.getline(nome_str, 100);
          target_export[i] = new sc_export< ac_tlm_transport_if >( nome_str );
