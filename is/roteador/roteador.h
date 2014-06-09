@@ -32,9 +32,10 @@ class roteador :
   {
     public:
     /// Exposed port with ArchC interface
-    sc_export< ac_tlm_transport_if > **target_export;
+    sc_export< ac_tlm_transport_if > target_export;
 
     ac_tlm_port DM_port;
+    ac_tlm_port LOCK_port;
 
     /**
      * Implementation of TLM transport method that
@@ -46,22 +47,15 @@ class roteador :
     ac_tlm_rsp transport( const ac_tlm_req &request ) {
 
       ac_tlm_rsp response;
-
-      switch( request.type ) {
-      case READ :     // Packet is sent from Master to Slave
-        #ifdef DEBUG  // Turn it on to print transport level messages
-        response = DM_port->transport(request);
-        #endif
-        break;
-      case WRITE:     // Packet is sent from Slave to Master
-        #ifdef DEBUG
-        response = DM_port->transport(request);
-        #endif
-        break;
-      default :
-        response.status = ERROR;
-        break;
+      ac_tlm_req *req_arrumada;
+      
+      if (request.addr < 5242880 ){
+	response = DM_port->transport(request);
+      } else {
+	req_arrumada = arruma(request, 0);
+	response = LOCK_port->transport(*req_arrumada);
       }
+      
 
       return response;
     }
@@ -82,6 +76,16 @@ class roteador :
     
     private:
       uint core_num;
+      ac_tlm_req req;
+      
+      ac_tlm_req* arruma(const ac_tlm_req &request, int m)
+         {
+            ac_tlm_req *arruma_req = &req;
+            memcpy(arruma_req, &request, sizeof(ac_tlm_req));
+            arruma_req->addr = m;
+            return arruma_req;
+         }
+
   };
 
 }

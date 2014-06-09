@@ -25,10 +25,12 @@ const char *archc_options="-abi -dy ";
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
 #include  "roteador.h"
+#include  "lock.h"
 #include  <sstream>
 
 using user::ac_tlm_mem;
 using user::roteador;
+using user::lock;
 
 char** alloc_args(int n, char **av){
   char **av_cpy;
@@ -58,51 +60,90 @@ int sc_main(int ac, char *av[])
   std::stringstream nomefinal;
 
   //!  ISA simulator
-  mips1 **core = new mips1 *[CORE_NUM];
+  mips1 mips1_proc1("mips1_1");
+  mips1 mips1_proc2("mips1_2");
+  mips1 mips1_proc3("mips1_3");
+  mips1 mips1_proc4("mips1_4");
+  mips1 mips1_proc5("mips1_5");
+  mips1 mips1_proc6("mips1_6");
+  mips1 mips1_proc7("mips1_7");
+  mips1 mips1_proc8("mips1_8");
   roteador rot("roteador", CORE_NUM);
   ac_tlm_mem mem("mem");
+  lock lock1("lock_mem");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
+  ac_trace("mips1_proc2.trace");
+  ac_trace("mips1_proc3.trace");
+  ac_trace("mips1_proc4.trace");
+  ac_trace("mips1_proc5.trace");
+  ac_trace("mips1_proc6.trace");
+  ac_trace("mips1_proc7.trace");
+  ac_trace("mips1_proc8.trace");
 #endif 
   
   //cria conexao entre roteador(master) e memoria(slave)
   rot.DM_port(mem.target_export);
+  rot.LOCK_port(lock1.target_export);
 
   av2 = alloc_args(ac, av);
+  
+  //cria conexao entre processadores(master) e roteador(slave)
+  mips1_proc1.DM_port(rot.target_export);
+  mips1_proc2.DM_port(rot.target_export);
+  mips1_proc3.DM_port(rot.target_export);  
+  mips1_proc4.DM_port(rot.target_export);  
+  mips1_proc5.DM_port(rot.target_export);  
+  mips1_proc6.DM_port(rot.target_export);  
+  mips1_proc7.DM_port(rot.target_export);  
+  mips1_proc8.DM_port(rot.target_export);  
 
-  for (i = 0; i < CORE_NUM; i++){
-    nomefinal.str("mips1_");
-    nomefinal << i;
-    nomefinal.getline(nome, 100);
-
-    //cria conexao entre processadores(master) e roteador(slave)
-    core[i] = new mips1(nome);
-    core[i]->DM_port(*(rot.target_export[i]));  
-
-    cpy_strings(ac, av2, av);
-    core[i]->init(ac, av2);
-  }
+  cpy_strings(ac, av2, av);
+  mips1_proc1.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc2.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc3.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc4.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc5.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc6.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc7.init(ac, av2);
+  cpy_strings(ac, av2, av);
+  mips1_proc8.init(ac, av2);
+  
 
   cerr << endl;
 
   sc_start();
 
-  for (i = 0; i < CORE_NUM; i++){
-    core[i]->PrintStat();
-    cerr << endl;
-  }
+  mips1_proc1.PrintStat();
+//   mips1_proc2.PrintStat();
+//   mips1_proc3.PrintStat();
+//   mips1_proc4.PrintStat();
+//   mips1_proc5.PrintStat();
+//   mips1_proc6.PrintStat();
+//   mips1_proc7.PrintStat();
+//   mips1_proc8.PrintStat();
+  
+  cerr << endl;
 
 #ifdef AC_STATS
-  for (i = 0; i < CORE_NUM; i++){
-    core[i]->ac_sim_stats.time = sc_simulation_time();
-    core[i]->ac_sim_stats.print();
-  }
+  mips1_proc1.ac_sim_stats.time = sc_simulation_time();
+  mips1_proc1.ac_sim_stats.print();
+  
+  mips1_proc2.ac_sim_stats.time = sc_simulation_time();
+  mips1_proc2.ac_sim_stats.print();
+  
 #endif 
 
 #ifdef AC_DEBUG
   ac_close_trace();
 #endif 
 
-  return core[0]->ac_exit_status;
+  return mips1_proc1.ac_exit_status || mips1_proc2.ac_exit_status;
 }
