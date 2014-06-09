@@ -90,7 +90,6 @@ public:
       #ifdef DEBUG
 	cout << "Releasing lock!\n";
       #endif
-      cout << "Funfa!\n";
       response.status = setlock();
       break;
     default :
