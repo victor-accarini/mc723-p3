@@ -64,7 +64,7 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
   /// Internal read
-  ac_tlm_rsp_status getfatorial( const int & , const double & );
+  ac_tlm_rsp_status getfactorial( const int & , const double & );
 
   /**
    * Implementation of TLM transport method that
@@ -79,7 +79,6 @@ public:
 
     //request.addr = number to use factorial
     response.status = getfactorial(request.addr, response.data);
-    break;
 
     return response;
   }
