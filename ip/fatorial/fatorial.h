@@ -64,7 +64,7 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
   /// Internal read
-  ac_tlm_rsp_status getfactorial( const int & , const double & );
+  ac_tlm_rsp_status getfactorial( const int & , double & );
 
   /**
    * Implementation of TLM transport method that

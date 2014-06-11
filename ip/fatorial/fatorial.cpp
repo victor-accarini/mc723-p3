@@ -84,7 +84,7 @@ factorial::~factorial() {
   * @param d id the factorial of the number
   * @returns A TLM response packet with SUCCESS
 */
-ac_tlm_rsp_status factorial::getfactorial( const int &a , const double &d )
+ac_tlm_rsp_status factorial::getfactorial( const int &a , double &d )
 {
   d = factorial_numbers[a];
   return SUCCESS;
