@@ -56,7 +56,7 @@ namespace user
 {
 
 /// A TLM fatorial
-class fatorial :
+class factorial :
   public sc_module,
   public ac_tlm_transport_if // Using ArchC TLM protocol
 {
