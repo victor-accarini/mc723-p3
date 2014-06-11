@@ -64,7 +64,7 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
   /// Internal read
-  ac_tlm_rsp_status getfatorial( const uint32_t & );
+  ac_tlm_rsp_status getfatorial( const int & , const double & );
 
   /**
    * Implementation of TLM transport method that
@@ -77,22 +77,9 @@ public:
 
     ac_tlm_rsp response;
 
-    switch( request.type ) {
-    case READ :     // Packet is a READ one
-      #ifdef DEBUG  // Turn it on to print transport level messages
-	cout << "Getting factorial!\n";
-      #endif
-      response.status = getfactorial(response.data);
-      break;
-    case WRITE:     // Packet is a WRITE
-      #ifdef DEBUG
-	cout << "Useless!\n";
-      #endif
-      break;
-    default :
-      response.status = ERROR;
-      break;
-    }
+    //request.addr = number to use factorial
+    response.status = getfactorial(request.addr, response.data);
+    break;
 
     return response;
   }
@@ -104,18 +91,18 @@ public:
    * @param k Memory size in kilowords.
    *
    */
-  lock( sc_module_name module_name );
+  factorial( sc_module_name module_name );
 
   /**
    * Default destructor.
    */
-  ~lock();
+  ~factorial();
 
 private:
-  uint8_t *memory;
+  double factorial_numbers[50];
 
 };
 
 };
 
-#endif //AC_TLM_MEM_H_
+#endif //FACTORIAL_H_
