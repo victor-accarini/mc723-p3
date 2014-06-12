@@ -64,7 +64,7 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
   /// Internal read
-  ac_tlm_rsp_status getfactorial( const int & , double & );
+  ac_tlm_rsp_status getfactorial( const uint32_t & , uint32_t & );
 
   /**
    * Implementation of TLM transport method that
@@ -98,7 +98,7 @@ public:
   ~factorial();
 
 private:
-  double factorial_numbers[50];
+  uint32_t factorial_numbers[50];
 
 };
 

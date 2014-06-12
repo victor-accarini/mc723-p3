@@ -63,6 +63,7 @@ factorial::factorial( sc_module_name module_name ) :
     factorial_numbers[10] = 3628800;
     factorial_numbers[11] = 39916800;
     factorial_numbers[12] = 479001600;
+/*
     factorial_numbers[13] = 6227020800;
     factorial_numbers[14] = 87178291200;
     factorial_numbers[15] = 1307674368000;
@@ -71,6 +72,7 @@ factorial::factorial( sc_module_name module_name ) :
     factorial_numbers[18] = 6402373705728000;
     factorial_numbers[19] = 121645100408832000;
     factorial_numbers[20] = 2432902008176640000;
+*/
 
 }
 
@@ -84,7 +86,7 @@ factorial::~factorial() {
   * @param d id the factorial of the number
   * @returns A TLM response packet with SUCCESS
 */
-ac_tlm_rsp_status factorial::getfactorial( const int &a , double &d )
+ac_tlm_rsp_status factorial::getfactorial( const uint32_t &a , uint32_t &d )
 {
   d = factorial_numbers[a];
   return SUCCESS;
