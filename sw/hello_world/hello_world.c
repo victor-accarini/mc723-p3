@@ -2,10 +2,10 @@
 #include <stdlib.h>
 
 #define LOCK     5242884
-#define FATORIAL 5242888
+#define FATORIAL 5242888U
 
 volatile int* _lock = (int*)LOCK;
-volatile uint32_t* _fatorial = (uint32_t*)FATORIAL;
+volatile unsigned int* _fatorial = (unsigned int*)FATORIAL;
 
 void glock()
 {
@@ -21,13 +21,17 @@ void flock()
 }
 
 int main(int argc, char *argv[]){
-  int i, valor_calc, impar;
+  int i, j, impar, inicio, fim;
+  double valor_calc, aux;
+  double extra = 0;
   static int global_cpuid = 0;
-  static int global_potencia = 12;
-  static int valor = 2;
+  static int barreira = 0, barreira2 = 0;
+  static int global_potencia = 8;
+  static double valor = 0.2;
   int local_cpuid;
   int tam_trabalho;
-  static int *x;
+  static double *x = NULL;
+  static double resultado_final = 0;
   
   //Obtendo o valor do core
   glock();
@@ -38,37 +42,76 @@ int main(int argc, char *argv[]){
 
   while(global_cpuid != 8);//Barreira
   
-  //Divisão do trabalho
-  tam_trabalho = global_potencia/global_cpuid;
-  
-  if (local_cpuid == 0){
-    x = malloc(sizeof(int)*global_potencia);
+  for (j = 0; j < 10; j++){    
+    //Divisão do trabalho
+    tam_trabalho = global_potencia/global_cpuid;
     
-    x[0] = valor;
-    for(i = 1; i < global_potencia; i++){
-      x[i] = x[i-1]*valor*valor;
+    if (local_cpuid == 0){
+      if (x == NULL) x = malloc(sizeof(double)*global_potencia);
+      
+      x[0] = valor;
+      for(i = 1; i < global_potencia; i++){
+	x[i] = x[i-1]*valor*valor;
+	barreira2++;
+      }
+      barreira2++;
     }
+
+    while(barreira2 != 8);
+    
+    if (local_cpuid == 6){
+      impar = 2*5 + 1;
+      valor_calc = *(_fatorial+impar);
+      valor_calc *= 12*13;
+      aux = valor_calc;
+      extra = x[local_cpuid];
+      extra = extra/valor_calc;
+    } else if (local_cpuid == 7) {
+      impar = 2*5 + 1;
+      valor_calc = *(_fatorial+impar);
+      valor_calc *= 12*13*14*15;
+      aux = valor_calc;
+      extra = x[local_cpuid];
+      extra = extra/valor_calc*-1;
+    } else {
+      impar = 2*local_cpuid + 1;
+      valor_calc = *(_fatorial+impar);
+      aux = valor_calc;
+      if (local_cpuid%2 == 0){
+	extra = x[local_cpuid];
+	extra = extra/valor_calc;
+      } else {
+	extra = x[local_cpuid];
+	extra = extra/valor_calc*-1;
+      }
+    }
+    glock();
+    printf("Extra: %.8f -- X[%d]: %.2f -- Fatorial: %.2f\n", extra, local_cpuid, x[local_cpuid], aux);
+    flock();
+    //Calcular o seno  de x
+    glock();
+      resultado_final += extra;
+      barreira++;
+    flock();
+    
+    while(barreira != 8);//Barreira
+    
+    if (local_cpuid == 0){
+      printf("Resultado Final:\nSeno(%f) = %.4f\n", valor, resultado_final);
+    }
+    
+    glock();
+    if (local_cpuid == 0){    
+      barreira2 = 0;
+      resultado_final = 0;
+      valor += 0.2;
+      barreira = 0;
+    }
+    flock();
+    
+    while(barreira != 0);//Barreira
+    
   }
-
-  if (local_cpuid < global_cpuid - 1){
-    for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1); i++){
-      impar = 2*i + 1;
-      valor_calc = *(_fatorial+4U);
-    }
-  } else {
-    for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1) + global_potencia%global_cpuid; i++){
-      impar = 2*i + 1;
-      valor_calc = *(_fatorial+4U);
-    }
-  }
-
-  glock();
-  printf("Core %d  --  Valor:%d  --  Inicio: %d  --  Fim: %d\n", local_cpuid, valor_calc, tam_trabalho*local_cpuid, tam_trabalho*(local_cpuid+1));
-  flock();
-
-  
-  
-  
   for(i = 0; i < 50000; i++);
   exit(0); // To avoid cross-compiler exit routine
   return 0; // Never executed, just for compatibility

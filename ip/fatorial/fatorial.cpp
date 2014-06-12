@@ -35,6 +35,7 @@
 // ArchC includes
 
 #include "fatorial.h"
+#include <endian.h>
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -50,23 +51,23 @@ factorial::factorial( sc_module_name module_name ) :
     target_export( *this );
 
     /// Initialize memory vector
-    factorial_numbers[0] = 1;
-    factorial_numbers[1] = 1;
-    factorial_numbers[2] = 2;
-    factorial_numbers[3] = 6;
-    factorial_numbers[4] = 24;
-    factorial_numbers[5] = 120;
-    factorial_numbers[6] = 720;
-    factorial_numbers[7] = 5040;
-    factorial_numbers[8] = 40320;
-    factorial_numbers[9] = 362880;
-    factorial_numbers[10] = 3628800;
-    factorial_numbers[11] = 39916800;
-    factorial_numbers[12] = 479001600;
-/*
-    factorial_numbers[13] = 6227020800;
-    factorial_numbers[14] = 87178291200;
-    factorial_numbers[15] = 1307674368000;
+    factorial_numbers = new uint32_t[20];
+    factorial_numbers[0] = 1U;
+    factorial_numbers[1] = 1U;
+    factorial_numbers[2] = 2U;
+    factorial_numbers[3] = 6U;
+    factorial_numbers[4] = 24U;
+    factorial_numbers[5] = 120U;
+    factorial_numbers[6] = 720U;
+    factorial_numbers[7] = 5040U;
+    factorial_numbers[8] = 40320U;
+    factorial_numbers[9] = 362880U;
+    factorial_numbers[10] = 3628800U;
+    factorial_numbers[11] = 39916800U;
+    factorial_numbers[12] = 479001600U;
+/*    factorial_numbers[13] = 6227020800U;
+    factorial_numbers[14] = 87178291200U;
+    factorial_numbers[15] = 1307674368000U;
     factorial_numbers[16] = 20922789888000;
     factorial_numbers[17] = 355687428096000;
     factorial_numbers[18] = 6402373705728000;
@@ -78,6 +79,7 @@ factorial::factorial( sc_module_name module_name ) :
 
 /// Destructor
 factorial::~factorial() {
+  delete [] factorial_numbers;
 }
 
 /** Get Factorial
@@ -88,6 +90,8 @@ factorial::~factorial() {
 */
 ac_tlm_rsp_status factorial::getfactorial( const uint32_t &a , uint32_t &d )
 {
+  //cout << "Endereço: " << a << " -- Valor: " << factorial_numbers[a] << "\n";
   d = factorial_numbers[a];
+  d = be32toh(d);
   return SUCCESS;
 }

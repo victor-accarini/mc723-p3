@@ -98,7 +98,7 @@ public:
   ~factorial();
 
 private:
-  uint32_t factorial_numbers[50];
+  uint32_t *factorial_numbers;
 
 };
 
