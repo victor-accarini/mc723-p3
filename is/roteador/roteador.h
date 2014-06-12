@@ -56,6 +56,7 @@ public:
       req_arrumada = arruma(request, 0);
       response = LOCK_port->transport(*req_arrumada);
     } else {
+      errs() << "Request para o Fatorial\n";
       req_arrumada = arruma(request, request.addr - 5242888);
       response = F_port->transport(*req_arrumada);
     }
