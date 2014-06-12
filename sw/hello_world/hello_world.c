@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
   }
 
   glock();
-  printf("Core %d:\nValor:%d\n", local_cpuid, valor);
+  printf("Core %d  --  Valor:%d  --  Inicio: %d  --  Fim: %d\n", local_cpuid, valor, tam_trabalho*local_cpuid, tam_trabalho*(local_cpuid+1));
   flock();
 
   
