@@ -21,7 +21,7 @@ void flock()
 }
 
 int main(int argc, char *argv[]){
-  int i;
+  int i, valor, impar;
   static int global_cpuid = 0;
   static int global_potencia = 14;
   static int valor = 2;
@@ -40,9 +40,6 @@ int main(int argc, char *argv[]){
   
   //Divisão do trabalho
   tam_trabalho = global_potencia/global_cpuid;
-  if (local_cpuid < global_potencia%global_cpuid){
-    tam_trabalho++;
-  }
   
   if (local_cpuid == 0){
     x = malloc(sizeof(int)*global_potencia);
@@ -52,9 +49,21 @@ int main(int argc, char *argv[]){
       x[i] = x[i-1]*valor*valor;
     }
   }
-  
+
+  if (local_cpuid < global_cpuid - 1){
+    for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1); i++){
+      impar = 2*i + 1;
+      valor = *(_factorial+impar);
+    }
+  } else {
+    for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1) + global_potencia%global_cpuid; i++){
+      impar = 2*i + 1;
+      valor = *(_factorial+impar);
+    }
+  }
+
   glock();
-  printf("Core %d:\nTam Trabalho:%d\n", local_cpuid, tam_trabalho);
+  printf("Core %d:\nValor:%d\n", local_cpuid, valor);
   flock();
 
   

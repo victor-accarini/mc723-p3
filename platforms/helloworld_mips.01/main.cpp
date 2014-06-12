@@ -26,11 +26,13 @@ const char *archc_options="-abi -dy ";
 #include  "ac_tlm_mem.h"
 #include  "roteador.h"
 #include  "lock.h"
+#include  "fatorial.h"
 #include  <sstream>
 
 using user::ac_tlm_mem;
 using user::roteador;
 using user::lock;
+using user::factorial;
 
 char** alloc_args(int n, char **av){
   char **av_cpy;
@@ -54,10 +56,7 @@ void cpy_strings(int n, char **dest, char **origem){
 
 int sc_main(int ac, char *av[])
 {
-  int i;
   char **av2;
-  char nome[100];
-  std::stringstream nomefinal;
 
   //!  ISA simulator
   mips1 mips1_proc1("mips1_1");
@@ -71,6 +70,7 @@ int sc_main(int ac, char *av[])
   roteador rot("roteador", CORE_NUM);
   ac_tlm_mem mem("mem");
   lock lock1("lock_mem");
+  factorial fatorial("fatorial");
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
@@ -86,6 +86,7 @@ int sc_main(int ac, char *av[])
   //cria conexao entre roteador(master) e memoria(slave)
   rot.DM_port(mem.target_export);
   rot.LOCK_port(lock1.target_export);
+  rot.F_port(fatorial.target_export);
 
   av2 = alloc_args(ac, av);
   
