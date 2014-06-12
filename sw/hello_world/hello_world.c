@@ -5,7 +5,7 @@
 #define FATORIAL 5242888
 
 volatile int* _lock = (int*)LOCK;
-volatile int* _fatorial = (int*)FATORIAL;
+volatile uint32_t* _fatorial = (uint32_t*)FATORIAL;
 
 void glock()
 {
@@ -53,17 +53,17 @@ int main(int argc, char *argv[]){
   if (local_cpuid < global_cpuid - 1){
     for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1); i++){
       impar = 2*i + 1;
-      valor_calc = *(_fatorial+impar);
+      valor_calc = *(_fatorial+4U);
     }
   } else {
     for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1) + global_potencia%global_cpuid; i++){
       impar = 2*i + 1;
-      valor_calc = *(_fatorial+impar);
+      valor_calc = *(_fatorial+4U);
     }
   }
 
   glock();
-  printf("Core %d  --  Valor:%d  --  Inicio: %d  --  Fim: %d\n", local_cpuid, valor, tam_trabalho*local_cpuid, tam_trabalho*(local_cpuid+1));
+  printf("Core %d  --  Valor:%d  --  Inicio: %d  --  Fim: %d\n", local_cpuid, valor_calc, tam_trabalho*local_cpuid, tam_trabalho*(local_cpuid+1));
   flock();
 
   
