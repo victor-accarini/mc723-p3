@@ -21,9 +21,9 @@ void flock()
 }
 
 int main(int argc, char *argv[]){
-  int i, valor, impar;
+  int i, valor_calc, impar;
   static int global_cpuid = 0;
-  static int global_potencia = 14;
+  static int global_potencia = 12;
   static int valor = 2;
   int local_cpuid;
   int tam_trabalho;
@@ -53,12 +53,12 @@ int main(int argc, char *argv[]){
   if (local_cpuid < global_cpuid - 1){
     for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1); i++){
       impar = 2*i + 1;
-      valor = *(_factorial+impar);
+      valor_calc = *(_fatorial+impar);
     }
   } else {
     for (i = tam_trabalho*local_cpuid; i < tam_trabalho*(local_cpuid+1) + global_potencia%global_cpuid; i++){
       impar = 2*i + 1;
-      valor = *(_factorial+impar);
+      valor_calc = *(_fatorial+impar);
     }
   }
 
