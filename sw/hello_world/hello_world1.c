@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
 
   while(global_cpuid != 8);//Barreira
   
-  for (j = 0; j < 10; j++){    
+  for (j = 0; j < 50; j++){    
     //Divisão do trabalho
     tam_trabalho = global_potencia/global_cpuid;
     
@@ -85,9 +85,9 @@ int main(int argc, char *argv[]){
 	extra = extra/valor_calc*-1;
       }
     }
-    glock();
-    printf("Extra: %.8f -- X[%d]: %.2f -- Fatorial: %.2f\n", extra, local_cpuid, x[local_cpuid], aux);
-    flock();
+//    glock();
+//    printf("Extra: %.8f -- X[%d]: %.2f -- Fatorial: %.2f\n", extra, local_cpuid, x[local_cpuid], aux);
+//    flock();
     //Calcular o seno  de x
     glock();
       resultado_final += extra;
@@ -97,14 +97,14 @@ int main(int argc, char *argv[]){
     while(barreira != 8);//Barreira
     
     if (local_cpuid == 0){
-      printf("Resultado Final:\nSeno(%f) = %.4f\n", valor, resultado_final);
+      printf("Resultado Final_:\nSeno(%f) = %.4f\n", valor, resultado_final);
     }
     
     glock();
     if (local_cpuid == 0){    
       barreira2 = 0;
       resultado_final = 0;
-      valor += 0.2;
+      valor += 0.05;
       barreira = 0;
     }
     flock();
